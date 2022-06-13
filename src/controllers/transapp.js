@@ -79,7 +79,7 @@ export const loginform= (req, res) => {
 export const get_driverregistration= (req, res) => {
   db.sequelize
     .query(
-      `SELECT *,(fullName,NIN,licenseNo,licenseExpiryDate,currentAddress,phoneNo,passWord) as fullname FROM driverregistration`,
+      `SELECT * FROM driverregistration`,
     )
     .then((results) => res.json({ success: true, results: results[0] }))
     .catch((err) => {
