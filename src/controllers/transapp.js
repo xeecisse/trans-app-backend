@@ -15,7 +15,8 @@ export const DriverReg= (req, res) => {
 
         db.sequelize
           .query(
-            `INSERT INTO driverregistration( 	fullName,licenseNo,licenseExpiryDate,	NIN,currentAddress,phoneNo,passWord) VALUES ('${fullName}','${nin}','${phone}','${password}','${licenseNo}','${address}','${licenseExpiry}')`,
+            `INSERT INTO driverregistration( 	fullName,licenseNo,licenseExpiryDate,	NIN,currentAddress,phoneNo,passWord) VALUES 
+            ('${fullName}','${licenseNo}','${licenseExpiry}','${nin}','${address}','${phone}','${password}')`,
           )
           .then((results) => {
           
@@ -88,4 +89,14 @@ export const get_driverregistration= (req, res) => {
     });
 };
 
-  
+export const get_PassengerReg= (req, res) => {
+  db.sequelize
+    .query(
+      `SELECT * FROM PassengerReg`,
+    )
+    .then((results) => res.json({ success: true, results: results[0] }))
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ err });
+    });
+};
