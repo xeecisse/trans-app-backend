@@ -100,3 +100,29 @@ export const get_PassengerReg= (req, res) => {
       res.status(500).json({ err });
     });
 };
+
+
+export const ride_registration= (req, res) => {
+  const {
+    id = '',
+    ride_manufacturer='',
+    ride_year='',
+    ride_color='',
+    license_plate='',
+
+    
+  } = req.body;
+
+        db.sequelize
+          .query(
+            `INSERT INTO ride_registration(ride_manufacturer,ride_year,ride_color,license_plate) VALUES ('${ride_manufacturer}','${ride_year}','${ride_color}','${license_plate}')`,
+          )
+          .then((results) => {
+          
+            res.json({ success: true, results,   });
+          })
+          .catch((err) => {
+            console.log(err);
+            res.status(500).json({ err });
+          });
+      }
