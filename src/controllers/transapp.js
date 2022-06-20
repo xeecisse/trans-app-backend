@@ -36,9 +36,7 @@ export const PassengerReg = (req, res) => {
   } = req.body;
 
   db.sequelize
-    .query(
-      `SELECT * FROM driverregistration`,
-    )
+    .query(`SELECT * FROM driverregistration`)
     .then((results) => {
       res.json({ success: true, results });
     })
@@ -66,12 +64,20 @@ export const loginform = (req, res) => {
 
 export const get_driverregistration = (req, res) => {
   db.sequelize
-    .query(
-      `SELECT * FROM driverregistration`
-    )
+    .query(`SELECT * FROM driverregistration`)
     .then((results) => res.json({ success: true, results: results[0] }))
     .catch((err) => {
       console.log(err);
       res.status(500).json({ err });
     });
 };
+
+export const get_PassengerReg = (req, res)=>{
+  db.sequelize
+    .query(`SELECT * FROM PassengerReg`)
+    .then((results) => res.json({ success: true, results: results[0] }))
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ err });
+    });
+}
