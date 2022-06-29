@@ -12,31 +12,27 @@ import validateLoginForm from '../validation/login';
 // create user
 const create = (req, res) => {
   const { errors, isValid } = validateRegisterForm(req.body);
-  let { 
-    firstname, 
-    lastname, 
-    username, 
-    role,
-    email, 
-    password,
+  let {
+    firstName,
+    lastName,
+    email,
+    password
   } = req.body;
-
+  // console.log(isValid)
   // check validation
-  if(!isValid) {
+  if (!isValid) {
     return res.status(400).json(errors);
   }
 
   User.findAll({ where: { email } }).then(user => {
     if (user.length) {
-      return res.status(400).json({ email: 'Email already exists!' });
+      return res.status(400).json({ msg: 'email already exists!' });
     } else {
-      let newUser = { 
-        firstname, 
-        lastname, 
-        username, 
-        role,
-        email, 
-        password, 
+      let newUser = {
+        firstName,
+        lastName,
+        email,
+        password
       };
       bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(newUser.password, salt, (err, hash) => {
@@ -59,53 +55,54 @@ const login = (req, res) => {
   const { errors, isValid } = validateLoginForm(req.body);
 
   // check validation
-  if(!isValid) {
-    return res.status(400).json(errors);
-  }
+  // if (!isValid) {
+  //   return res.status(400).json(errors);
+  // }
 
   const { email, password } = req.body;
+  console.log(req.body)
 
-  User.findAll({ 
-    where: { 
-      email 
-    } 
-  })
-  .then(user => {
-
-    //check for user
-    if (!user.length) {
-      errors.email = 'User not found!';
-      return res.status(404).json(errors);
+  User.findAll({
+    where: {
+      email
     }
-     
-    let originalPassword = user[0].dataValues.password
+  })
+    .then(user => {
 
-    //check for password
-    bcrypt
-      .compare(password, originalPassword)
-      .then(isMatch => {
-        if (isMatch) {
-          // user matched
-          console.log('matched!')
-          const { id, username } = user[0].dataValues;
-          const payload = { id, username }; //jwt payload
-          // console.log(payload)
+      //check for user
+      if (!user.length) {
+        errors.email = 'User not found!';
+        return res.status(404).json(errors);
+      }
+      // console.log(user)
+      let originalPassword = user[0].dataValues.password
 
-          jwt.sign(payload, 'secret', { 
-            expiresIn: 3600 
-          }, (err, token) => {
-            res.json({
-              success: true,
-              token: 'Bearer ' + token,
-              role: user[0].dataValues.role
+      //check for password
+      bcrypt
+        .compare(password, originalPassword)
+        .then(isMatch => {
+          if (isMatch) {
+            // user matched
+            console.log('matched!')
+            const { id, email } = user[0].dataValues;
+            const payload = { id, email }; //jwt payload
+            // console.log(payload)
+
+            jwt.sign(payload, 'secret', {
+              expiresIn: 3600
+            }, (err, token) => {
+              res.json({
+                success: true,
+                token: 'Bearer ' + token,
+                // role: user[0].dataValues.role
+              });
             });
-          });
-        } else {
-          errors.password = 'Password not correct';
-          return res.status(400).json(errors);
-        }
-    }).catch(err => console.log(err));
-  }).catch(err => res.status(500).json({err}));
+          } else {
+            errors.password = 'Password not correct';
+            return res.status(400).json(errors);
+          }
+        }).catch(err => console.log(err));
+    }).catch(err => res.status(500).json({ err }));
 };
 
 // fetch all users
@@ -120,11 +117,11 @@ const findAllUsers = (req, res) => {
 // fetch user by userId
 const findById = (req, res) => {
   const id = req.params.userId;
-  
+
   User.findAll({ where: { id } })
     .then(user => {
-      if(!user.length) {
-        return res.json({ msg: 'user not found'})
+      if (!user.length) {
+        return res.json({ msg: 'user not found' })
       }
       res.json({ user })
     })
@@ -133,12 +130,12 @@ const findById = (req, res) => {
 
 // update a user's info
 const update = (req, res) => {
-  let { firstname, lastname, HospitalId, role, image } = req.body;
+  let { name, lastname, HospitalId, role, image } = req.body;
   const id = req.params.userId;
 
   User.update(
     {
-      firstname,
+      name,
       lastname,
       role,
     },
@@ -157,11 +154,11 @@ const deleteUser = (req, res) => {
     .catch(err => res.status(500).json({ msg: 'Failed to delete!' }));
 };
 
-export { 
-    create, 
-    login, 
-    findAllUsers, 
-    findById, 
-    update, 
-    deleteUser 
+export {
+  create,
+  login,
+  findAllUsers,
+  findById,
+  update,
+  deleteUser
 }

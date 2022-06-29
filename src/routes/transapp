@@ -1,13 +1,18 @@
-import { DriverReg, get_driverregistration, get_PassengerReg, loginform, PassengerReg, ride_registration, } from "../controllers/transapp";
+import { DriverReg, get_details, get_driverdetails, get_driverregistration, get_PassengerReg, get_requestride, loginform, PassengerReg, profile, Publish_ride, requestride, ride_registration, } from "../controllers/transapp";
 
-  
-module.exports = (app) => {  
-  app.post ("/login",loginform);
-  app.post ("/PassengerReg",   PassengerReg);
-  app.post ("/DriverReg",   DriverReg);
-  app.get ("/get_driverregistration",  get_driverregistration);
-  app.get ("/get_PassengerReg",  get_PassengerReg);
-  app.post ("/ride_registration",   ride_registration);
 
+module.exports = (app) => {
+  app.post("/login", loginform);
+  app.post("/PassengerReg", PassengerReg);
+  app.post("/DriverReg", DriverReg);
+  app.post("/Publish_ride", Publish_ride);
+  app.get("/get_driverregistration", get_driverregistration);
+  app.get("/get_PassengerReg", get_PassengerReg);
+  app.post("/ride_registration", ride_registration);
+  app.get("/get_driverdetails", get_driverdetails);
+   app.get("/get_requestride", get_requestride);
+  app.post("/requestride", requestride);
+  app.get("/get_details", get_details);
+  app.get("/profile", profile);
 
 }

@@ -4,6 +4,7 @@ export const DriverReg= (req, res) => {
   const {
     id = '',
     fullName= "",
+    Age="",
     phone= "",
     nin= "",
     licenseNo= "",
@@ -15,8 +16,8 @@ export const DriverReg= (req, res) => {
 
         db.sequelize
           .query(
-            `INSERT INTO driverregistration( 	fullName,licenseNo,licenseExpiryDate,	NIN,currentAddress,phoneNo,passWord) VALUES 
-            ('${fullName}','${licenseNo}','${licenseExpiry}','${nin}','${address}','${phone}','${password}')`,
+            `INSERT INTO driverregistration( 	fullName,Age,licenseNo,licenseExpiryDate,	NIN,currentAddress,phoneNo,passWord) VALUES 
+            ('${fullName}','${Age}','${licenseNo}','${licenseExpiry}','${nin}','${address}','${phone}','${password}')`,
           )
           .then((results) => {
           
@@ -58,14 +59,14 @@ export const DriverReg= (req, res) => {
 export const loginform= (req, res) => {
   const {
     id = '',
-    phone='',
+    phoneNo='',
     password='',
     
   } = req.body;
 
         db.sequelize
           .query(
-            `INSERT INTO loginform( phoneNo,password) VALUES ('${phone}','${password}')`,
+            `INSERT INTO loginform( phoneNo,password) VALUES ('${phoneNo}','${password}')`,
           )
           .then((results) => {
           
@@ -126,3 +127,132 @@ export const ride_registration= (req, res) => {
             res.status(500).json({ err });
           });
       }
+      export const get_driverdetails= (req, res) => {
+        db.sequelize
+          .query(
+            `SELECT * FROM driverregistration`,
+          )
+          .then((results) => res.json({ success: true, results: results[0] }))
+          .catch((err) => {
+            console.log(err);
+            res.status(500).json({ err });
+          });
+      };
+      
+      export const get_requestride= (req, res) => {
+        db.sequelize
+          .query(
+            `SELECT * FROM requestride`,
+          )
+          .then((results) => res.json({ success: true, results: results[0] }))
+          .catch((err) => {
+            console.log(err);
+            res.status(500).json({ err });
+          });
+      };
+
+      
+      export const requestride= (req, res) => {
+        const {
+          id = '',
+       
+          trip_from= "",
+            trip_to= "",
+            date= "",
+            time= "",
+            numberOfSeat= "",
+            nextOfKinPhone= "",
+          
+        } = req.body;
+      
+              db.sequelize
+                .query(
+                  `INSERT INTO requestride(trip_from, trip_to, date, time, numberOfSeat, 
+                    nextOfKinPhone) VALUES ('${trip_from}','${trip_to}','${date}',
+                  '${time}','${numberOfSeat}','${nextOfKinPhone}')`,
+                )
+                .then((results) => {
+                
+                  res.json({ success: true, results,   });
+                })
+                .catch((err) => {
+                  console.log(err);
+                  res.status(500).json({ err });
+                });
+            }
+            export const Publish_ride= (req, res) => {
+              const {
+                id = '',
+                CarName="",
+                LicencePlate="",
+                Caryear="",
+                CarColor ="",
+                Carmodel="",
+                Totalseats="",
+                
+              } = req.body;
+            
+                    db.sequelize
+                      .query(
+                        `INSERT INTO Publish_ride(CarName,LicencePlate,Caryear,CarColor,
+                          Carmodel,Totalseats) VALUES ('${CarName}','${LicencePlate}','${Caryear}','${CarColor}','${Carmodel}','${Totalseats}')`,
+                      )
+                      .then((results) => {
+                      
+                        res.json({ success: true, results,   });
+                      })
+                      .catch((err) => {
+                        console.log(err);
+                        res.status(500).json({ err });
+                      });
+                  }
+                  export const get_details= (req, res) => {
+                    db.sequelize
+                      .query(
+                        `SELECT * FROM requestride`,
+                        
+                      )
+                      .then((ridedeail) => {
+                        // res.json({ success: true, results: results[0] })
+                        db.sequelize
+                        .query(
+                          `SELECT * FROM driverregistration`,
+                          
+                        )
+                        .then((Publish) => {
+                          // res.json({ success: true, results: results[0] })
+                          db.sequelize
+                          .query(
+                            `SELECT * FROM Publish_ride`,
+                            
+                          )
+                          .then((results) => {
+                            res.json({ success: true, ridedeail, Publish, results: results[0] })
+                          })
+                          .catch((err) => {
+                            console.log(err);
+                            res.status(500).json({ err });
+                          });
+                        })
+                        .catch((err) => {
+                          console.log(err);
+                          res.status(500).json({ err });
+                        });
+                      })
+                      .catch((err) => {
+                        console.log(err);
+                        res.status(500).json({ err });
+                      });
+                  };
+
+             export const profile= (req, res) => {
+        db.sequelize
+          .query(
+            `SELECT * FROM driverregistration`,
+          )
+          .then((results) => res.json({ success: true, results: results[0] }))
+          .catch((err) => {
+            console.log(err);
+            res.status(500).json({ err });
+          });
+      };
