@@ -35,10 +35,10 @@ require('./config/passport')(passport);
 //default route
 app.get('/', (req, res) => res.send('Hello my World'));
 
-// require('./routes/user.js')(app);
+require('./routes/user.js')(app);
 // require('./routes/policyClass.js')(app);
 // require('./routes/feedback')(app);
-require('./routes/transapp')(app);
+require('./routes/transapp.js')(app);
 // require('./routes/new_inmate_reg')(app);
 // require('./routes/transapp')(app);
 
