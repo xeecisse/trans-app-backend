@@ -27,39 +27,12 @@ export const register= (req, res) => {
             console.log(err);
             res.status(500).json({ err });
           });
-      }
-
-      // export const PassengerReg= (req, res) => {
-      //   const {
-      //     id = '',
-      //     fullName= "",
-      //     phone= "",
-      //     nin= "",
-      //     address= "",
-      //     password= "",
-          
-      //   } = req.body;
-      
-      //         db.sequelize
-      //           .query(
-      //             `INSERT INTO passenger( fullName,phoneNo,NIN,	address,password) 
-      //             VALUES ('${fullName}','${phone}','${nin}','${address}','${password}')`,
-      //           )
-      //           .then((results) => {
-                
-      //             res.json({ success: true, results,   });
-      //           })
-      //           .catch((err) => {
-      //             console.log(err);
-      //             res.status(500).json({ err });
-      //           });
-      //       }
-      
+      }  
 
   export const  driver_loginform= (req, res) => {
     db.sequelize
       .query(
-        `SELECT * FROM driverregistration`,
+        `SELECT * FROM registration`,
       )
       .then((results) => res.json({ success: true, results: results[0] }))
       .catch((err) => {
@@ -97,7 +70,7 @@ export const loginform = (req, res) => {
 
   db.sequelize
     .query(
-      `INSERT INTO loginform( phoneNo,password) VALUES ('${phone}','${password}')`
+      `SELECT * FROM registration`,
     )
     .then((results) => {
       res.json({ success: true, results });
@@ -149,7 +122,7 @@ export const registercar= (req, res) => {
       export const get_driverdetails= (req, res) => {
         db.sequelize
           .query(
-            `SELECT * FROM driverregistration`,
+            `SELECT * FROM registration`,
           )
           .then((results) => res.json({ success: true, results: results[0] }))
           .catch((err) => {
@@ -169,7 +142,18 @@ export const registercar= (req, res) => {
             res.status(500).json({ err });
           });
       };
-
+      export const get_requestride_user= (req, res) => {
+        const user_id = req.query.user_id
+        db.sequelize
+          .query(
+            `SELECT t.Trip_from, t.Trip_to, t.date, t.time, t.availableSeats, t.price, re.Trip_id, dr.id, dr.fullName, dr.Age, dr.phoneNo, dr.currentAddress, c.carName, c.carModel,c.carSeats,c.carColor,c.Platenumber,c.carYear FROM trip t JOIN requestride re ON t.id = re.Trip_id JOIN registration dr ON t.driver_id=dr.id JOIN registercar c ON t.car_id=c.id WHERE re.user_id=${user_id}`,
+          )
+          .then((results) => res.json({ success: true, results: results[0] }))
+          .catch((err) => {
+            console.log(err);
+            res.status(500).json({ err });
+          });
+      };
       
       export const requestride= (req, res) => {
         const {
@@ -181,14 +165,16 @@ export const registercar= (req, res) => {
             time= "",
             Seat= "",
             nextOfKinPhone= "",
+            trip_id= "",
+            user_id= "",
           
         } = req.body;
       
               db.sequelize
                 .query(
                   `INSERT INTO requestride(trip_from, trip_to, date, time,Seat, 
-                    nextOfKinPhone) VALUES ('${trip_from}','${trip_to}','${date}',
-                  '${time}','${Seat}','${nextOfKinPhone}')`,
+                    nextOfKinPhone,	Trip_id,user_id) VALUES ('${trip_from}','${trip_to}','${date}',
+                  '${time}','${Seat}','${nextOfKinPhone}','${trip_id}','${user_id}')`,
                 )
                 .then((results) => {
                 
@@ -235,7 +221,7 @@ export const registercar= (req, res) => {
                         // res.json({ success: true, results: results[0] })
                         db.sequelize
                         .query(
-                          `SELECT * FROM driverregistration`,
+                          `SELECT * FROM registration`,
                           
                         )
                         .then((Publish) => {
@@ -267,7 +253,7 @@ export const registercar= (req, res) => {
              export const profile= (req, res) => {
         db.sequelize
           .query(
-            `SELECT * FROM driverregistration`,
+            `SELECT * FROM registration`,
           )
           .then((results) => res.json({ success: true, results: results[0] }))
           .catch((err) => {
@@ -286,14 +272,15 @@ export const registercar= (req, res) => {
           time= "",
           availableSeats= "",
           price= "",
+          driver_id="",
           
         } = req.body;
       
               db.sequelize
                 .query(
                   `INSERT INTO trip(trip_from, trip_to, date, time,availableSeats, 
-                    price) VALUES ('${from}','${to}','${date}','${time}','${availableSeats}',
-                  '${price}')`
+                    price,driver_id) VALUES ('${from}','${to}','${date}','${time}','${availableSeats}',
+                  '${price}','${driver_id}')`
                 )
                 .then((results) => {
                 
@@ -317,9 +304,10 @@ export const registercar= (req, res) => {
                 });
             };   
             export const get_Trips= (req, res) => {
+              const user_id = req.query.user_id
               db.sequelize
                 .query(
-                  `SELECT * FROM trip`,
+                  `SELECT * FROM trip where driver_id = ${user_id}`,
                 )
                 .then((results) => res.json({ success: true, results: results[0] }))
                 .catch((err) => {
