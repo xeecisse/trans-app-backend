@@ -1,167 +1,90 @@
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import passport from 'passport';
+import db from "../models";
 
-import db from '../models';
-const User = db.User;
+export function login (req,res){
+    const {phone, password, account_type=''} = req.body;
 
-// load input validation
-import validateRegisterForm from '../validation/register';
-import validateLoginForm from '../validation/login';
+    db.sequelize.query(`SELECT * FROM registration WHERE phoneNo="${phone}" AND account_type='${account_type}'`)
+    .then(resp => {
+        if(resp[0].length) {
+            let user = resp[0][0]
+            // console.log(user)
+            if(user.passWord === password) {
+                res.json({ success:true, user, message: "User successfully logged in"})
 
-// create user
-const create = (req, res) => {
-  const { errors, isValid } = validateRegisterForm(req.body);
-  let { 
-    firstname, 
-    lastname, 
-    username, 
-    role,
-    email, 
-    password,
-  } = req.body;
-
-  // check validation
-  if(!isValid) {
-    return res.status(400).json(errors);
-  }
-
-  User.findAll({ where: { email } }).then(user => {
-    if (user.length) {
-      return res.status(400).json({ email: 'Email already exists!' });
-    } else {
-      let newUser = { 
-        firstname, 
-        lastname, 
-        username, 
-        role,
-        email, 
-        password, 
-      };
-      bcrypt.genSalt(10, (err, salt) => {
-        bcrypt.hash(newUser.password, salt, (err, hash) => {
-          if (err) throw err;
-          newUser.password = hash;
-          User.create(newUser)
-            .then(user => {
-              res.json({ user });
-            })
-            .catch(err => {
-              res.status(500).json({ err });
-            });
-        });
-      });
-    }
-  });
-};
-
-const login = (req, res) => {
-  const { errors, isValid } = validateLoginForm(req.body);
-
-  // check validation
-  if(!isValid) {
-    return res.status(400).json(errors);
-  }
-
-  const { email, password } = req.body;
-
-  User.findAll({ 
-    where: { 
-      email 
-    } 
-  })
-  .then(user => {
-
-    //check for user
-    if (!user.length) {
-      errors.email = 'User not found!';
-      return res.status(404).json(errors);
-    }
-     
-    let originalPassword = user[0].dataValues.password
-
-    //check for password
-    bcrypt
-      .compare(password, originalPassword)
-      .then(isMatch => {
-        if (isMatch) {
-          // user matched
-          console.log('matched!')
-          const { id, username } = user[0].dataValues;
-          const payload = { id, username }; //jwt payload
-          // console.log(payload)
-
-          jwt.sign(payload, 'secret', { 
-            expiresIn: 3600 
-          }, (err, token) => {
-            res.json({
-              success: true,
-              token: 'Bearer ' + token,
-              role: user[0].dataValues.role
-            });
-          });
+            } else {
+                res.json({ success:false, message: "Password is incorrect"})
+            }
+            
         } else {
-          errors.password = 'Password not correct';
-          return res.status(400).json(errors);
+            res.json({ success:false, message: "Phone number does not exist"})
         }
-    }).catch(err => console.log(err));
-  }).catch(err => res.status(500).json({err}));
-};
-
-// fetch all users
-const findAllUsers = (req, res) => {
-  User.findAll()
-    .then(user => {
-      res.json({ user });
     })
-    .catch(err => res.status(500).json({ err }));
-};
-
-// fetch user by userId
-const findById = (req, res) => {
-  const id = req.params.userId;
-  
-  User.findAll({ where: { id } })
-    .then(user => {
-      if(!user.length) {
-        return res.json({ msg: 'user not found'})
-      }
-      res.json({ user })
+    .catch(err => {
+        console.log(err)
+        res.status(500).json({ success:false, message: "Server unable to process request at this time, please try again later."})
     })
-    .catch(err => res.status(500).json({ err }));
-};
+}
 
-// update a user's info
-const update = (req, res) => {
-  let { firstname, lastname, HospitalId, role, image } = req.body;
-  const id = req.params.userId;
+// export function passengerLogin (req,res){
 
-  User.update(
-    {
-      firstname,
-      lastname,
-      role,
-    },
-    { where: { id } }
-  )
-    .then(user => res.status(200).json({ user }))
-    .catch(err => res.status(500).json({ err }));
-};
+//     const {phone, password} = req.body;
 
-// delete a user
-const deleteUser = (req, res) => {
-  const id = req.params.userId;
+//     db.sequelize.query(`SELECT * FROM passenger WHERE phoneNo="${phone}"`)
+//     .then(resp => {
+//         if(resp[0].length) {
+//             let user = resp[0][0]
+//             // console.log(user)
+//             if(user.password === password) {
+//                 res.json({ success:true, user, message: "User successfully logged in"})
 
-  User.destroy({ where: { id } })
-    .then(() => res.status.json({ msg: 'User has been deleted successfully!' }))
-    .catch(err => res.status(500).json({ msg: 'Failed to delete!' }));
-};
+//             } else {
+//                 res.json({ success:false, message: "Password is incorrect"})
+//             }
+            
+//         } else {
+//             res.json({ success:false, message: "Phone number does not exist"})
+//         }
+//     })
+//     .catch(err => {
+//         console.log(err)
+//         res.status(500).json({ success:false, message: "Server unable to process request at this time, please try again later."})
+//     })
+// }
 
-export { 
-    create, 
-    login, 
-    findAllUsers, 
-    findById, 
-    update, 
-    deleteUser 
+export function getUserInfo (req,res){
+    const {phone} = req.body;
+
+    db.sequelize.query(`SELECT * FROM registration WHERE phoneNo="${phone}" AND account_type='${account_type}'`)
+    .then(resp => {
+        if(resp[0].length) {
+            let user = resp[0][0]
+                res.json({ success:true, user, message: "User successfully logged in"})
+        } else {
+            res.json({ success:false, message: "Phone number does not exist"})
+        }
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(500).json({ success:false, message: "Server unable to process request at this time, please try again later."})
+    })
+}
+
+export function passengerInfo (req,res){
+
+    const {phone} = req.body;
+
+    db.sequelize.query(`SELECT * FROM passenger WHERE phoneNo="${phone}"`)
+    .then(resp => {
+        if(resp[0].length) {
+            let user = resp[0][0]
+            // console.log(user)
+                res.json({ success:true, user, message: "User successfully logged in"})
+        } else {
+            res.json({ success:false, message: "Phone number does not exist"})
+        }
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(500).json({ success:false, message: "Server unable to process request at this time, please try again later."})
+    })
 }
