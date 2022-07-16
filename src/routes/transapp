@@ -1,0 +1,10 @@
+import { DriverReg, get_driverregistration, get_PassengerReg, loginform, PassengerReg } from "../controllers/transapp";
+
+  
+module.exports = (app) => {  
+  app.post ("/login",loginform);
+  app.post ("/PassengerReg",   PassengerReg);
+  app.post ("/DriverReg",   DriverReg); 
+  app.get ("/get_driverregistration",  get_driverregistration);
+  app.get ("/get_PassengerReg",  get_PassengerReg);
+}

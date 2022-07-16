@@ -9,7 +9,7 @@ module.exports = (app) => {
   // app.post("/DriverReg", DriverReg);
   app.post("/Publish_ride", Publish_ride);
   app.get("/get_driverregistration", get_driverregistration);
-  app.get("/get_PassengerReg", get_PassengerReg);
+  // app.get("/get_PassengerReg", get_PassengerReg);
   // app.post("/ride_registration", ride_registration);
   app.get("/get_driverdetails", get_driverdetails);
    app.get("/get_requestride", get_requestride);
