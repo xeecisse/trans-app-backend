@@ -1,7 +1,7 @@
 import { register, driver_loginform, get_availableTrips, get_details, 
   get_driverdetails, get_driverregistration, get_PassengerReg, get_registercar, 
   get_requestride, get_Trips, passenger_loginform, profile,
-   Publish_ride, registercar, requestride, Trips, get_requestride_user, } from "../controllers/transapp";
+   Publish_ride, registercar, requestride, Trips, get_requestride_user, get_Trip_history, } from "../controllers/transapp";
 
 
 module.exports = (app) => {
@@ -24,6 +24,5 @@ module.exports = (app) => {
   app.get("/get_Trips", get_Trips);
   app.post("/get_availableTrips", get_availableTrips);
   app.get("/get_requestride_user", get_requestride_user);
-
-
+  app.get("/get_Trip_history", get_Trip_history);
 }

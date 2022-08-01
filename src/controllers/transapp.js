@@ -146,7 +146,11 @@ export const get_requestride_user = (req, res) => {
   const user_id = req.query.user_id
   db.sequelize
     .query(
-      `SELECT t.Trip_from, t.Trip_to, t.date, t.time, t.availableSeats, t.price, re.Trip_id, dr.id, dr.fullName, dr.Age, dr.phoneNo, dr.currentAddress, c.carName, c.carModel,c.carSeats,c.carColor,c.Platenumber,c.carYear FROM trip t JOIN requestride re ON t.id = re.Trip_id JOIN registration dr ON t.driver_id=dr.id JOIN registercar c ON t.car_id=c.id WHERE re.user_id=${user_id}`,
+      `SELECT t.Trip_from, t.Trip_to, t.date, t.time, t.availableSeats,
+       t.price, re.Trip_id, dr.id, dr.fullName, dr.Age, dr.phoneNo, dr.currentAddress, 
+       c.carName, c.carModel,c.carSeats,c.carColor,c.Platenumber,c.carYear FROM trip t 
+       JOIN requestride re ON t.id = re.Trip_id JOIN registration dr ON t.driver_id=dr.id 
+       JOIN registercar c ON t.car_id=c.id WHERE re.user_id=${user_id}`,
     )
     .then((results) => res.json({ success: true, results: results[0] }))
     .catch((err) => {
@@ -316,6 +320,19 @@ export const get_Trips = (req, res) => {
     });
 };
 export const get_availableTrips = (req, res) => {
+  const { from, to, date, time } = req.body
+  db.sequelize
+    .query(
+      `SELECT * FROM trip WHERE Trip_from='${from}' AND 	Trip_to='${to}' AND date='${date}' AND time='${time}'  `,
+    )
+    .then((results) => res.json({ success: true, results: results[0] }))
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ err });
+    });
+};
+
+export const get_Trip_history = (req, res) => {
   const { from, to, date, time } = req.body
   db.sequelize
     .query(
