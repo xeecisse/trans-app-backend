@@ -150,7 +150,7 @@ export const get_requestride_user = (req, res) => {
        t.price, re.Trip_id, dr.id, dr.fullName, dr.Age, dr.phoneNo, dr.currentAddress, 
        c.carName, c.carModel,c.carSeats,c.carColor,c.Platenumber,c.carYear FROM trip t 
        JOIN requestride re ON t.id = re.Trip_id JOIN registration dr ON t.driver_id=dr.id 
-       JOIN registercar c ON t.car_id=c.id WHERE re.user_id=${user_id}`,
+       JOIN registercar c ON t.car_id=c.id WHERE re.user_id='${user_id}'`,
     )
     .then((results) => res.json({ success: true, results: results[0] }))
     .catch((err) => {
@@ -160,6 +160,7 @@ export const get_requestride_user = (req, res) => {
 };
 
 export const requestride = (req, res) => {
+  console.log(req.body)
   const {
     id = '',
 
@@ -267,9 +268,9 @@ export const profile = (req, res) => {
 };
 
 export const Trips = (req, res) => {
+  console.log(req.body)
   const {
-    id = '',
-
+    car_id = '',
     from = "",
     to = "",
     date = "",
@@ -283,8 +284,8 @@ export const Trips = (req, res) => {
   db.sequelize
     .query(
       `INSERT INTO trip(trip_from, trip_to, date, time,availableSeats, 
-                    price,driver_id) VALUES ('${from}','${to}','${date}','${time}','${availableSeats}',
-                  '${price}','${driver_id}')`
+                    price,driver_id,car_id) VALUES ('${from}','${to}','${date}','${time}','${availableSeats}',
+                  '${price}','${driver_id}','${car_id}')`
     )
     .then((results) => {
 
@@ -337,6 +338,17 @@ export const get_Trip_history = (req, res) => {
   db.sequelize
     .query(
       `SELECT * FROM trip WHERE Trip_from='${from}' AND 	Trip_to='${to}' AND date='${date}' AND time='${time}'  `,
+    )
+    .then((results) => res.json({ success: true, results: results[0] }))
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ err });
+    });
+};
+export const nigerianstates = (req, res) => {
+  db.sequelize
+    .query(
+      "SELECT * FROM nigerianstates"
     )
     .then((results) => res.json({ success: true, results: results[0] }))
     .catch((err) => {
